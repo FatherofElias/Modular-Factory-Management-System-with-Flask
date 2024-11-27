@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from controllers.production_controller import ProductionController
 from models.schemas.production_schema import ProductionSchema
-from .. import limiter
+from __init__ import limiter
 
 bp = Blueprint('productions', __name__, url_prefix='/productions')
 

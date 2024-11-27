@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from controllers.employee_controller import EmployeeController
 from models.schemas.employee_schema import EmployeeSchema
-from .. import limiter
+from __init__ import limiter
 
 bp = Blueprint('employees', __name__, url_prefix='/employees')
 

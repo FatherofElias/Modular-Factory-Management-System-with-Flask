@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from controllers.customer_controller import CustomerController
 from models.schemas.customer_schema import CustomerSchema
-from .. import limiter
+from __init__ import limiter
 
 bp = Blueprint('customers', __name__, url_prefix='/customers')
 
