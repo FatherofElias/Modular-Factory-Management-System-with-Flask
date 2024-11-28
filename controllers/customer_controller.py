@@ -1,5 +1,8 @@
 from models.customer import Customer
 from database import db
+from sqlalchemy import func
+from models.order import Order
+
 
 class CustomerController:
     @staticmethod
@@ -34,3 +37,15 @@ class CustomerController:
             db.session.delete(customer)
             db.session.commit()
         return customer
+
+
+    @staticmethod
+    def determine_customer_lifetime_value(threshold):
+        result = db.session.query(
+            Customer.name.label('customer_name'),
+            func.sum(Order.total_price).label('total_order_value')
+        ).join(Order, Customer.id == Order.customer_id
+        ).group_by(Customer.name
+        ).having(func.sum(Order.total_price) >= threshold).all()
+
+        return result

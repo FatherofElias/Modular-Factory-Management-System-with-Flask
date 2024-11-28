@@ -45,3 +45,14 @@ def delete_production(production_id):
     if not deleted_production:
         return jsonify({'message': 'Production not found'}), 404
     return production_schema.jsonify(deleted_production)
+
+
+
+@bp.route('/efficiency', methods=['GET'])
+@limiter.limit("5 per minute")
+def get_production_efficiency():
+    specific_date = request.args.get('date')  # Expecting date in format 'YYYY-MM-DD'
+    if not specific_date:
+        return jsonify({'message': 'Date parameter is required'}), 400
+    efficiency_data = ProductionController.evaluate_production_efficiency(specific_date)
+    return jsonify(efficiency_data)

@@ -1,5 +1,7 @@
 from models.production import Production
 from database import db
+from sqlalchemy import func
+from models.product import Product
 
 class ProductionController:
     @staticmethod
@@ -34,3 +36,15 @@ class ProductionController:
             db.session.delete(production)
             db.session.commit()
         return production
+
+
+    @staticmethod
+    def evaluate_production_efficiency(specific_date):
+        subquery = db.session.query(Production).filter(Production.date_produced == specific_date).subquery()
+        result = db.session.query(
+            Product.name.label('product_name'),
+            func.sum(subquery.c.quantity_produced).label('total_quantity_produced')
+        ).join(subquery, Product.id == subquery.c.product_id
+        ).group_by(Product.name).all()
+
+        return result

@@ -45,8 +45,7 @@ class ProductController:
         pagination = Product.query.paginate(page=page, per_page=per_page, error_out=False)
         return pagination
     
-
-class ProductController:
+    
     @staticmethod
     def identify_top_selling_products():
         result = db.session.query(

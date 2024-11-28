@@ -45,3 +45,12 @@ def delete_customer(customer_id):
     if not deleted_customer:
         return jsonify({'message': 'Customer not found'}), 404
     return customer_schema.jsonify(deleted_customer)
+
+
+
+@bp.route('/lifetime-value', methods=['GET'])
+@limiter.limit("5 per minute")
+def get_customer_lifetime_value():
+    threshold = request.args.get('threshold', 500, type=float)  # Set a default threshold value if not provided
+    lifetime_value_data = CustomerController.determine_customer_lifetime_value(threshold)
+    return jsonify(lifetime_value_data)
