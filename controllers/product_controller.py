@@ -1,5 +1,7 @@
 from models.product import Product
 from database import db
+from sqlalchemy import func
+from models.order import Order
 
 
 
@@ -42,4 +44,18 @@ class ProductController:
     def get_paginated_products(page, per_page):
         pagination = Product.query.paginate(page=page, per_page=per_page, error_out=False)
         return pagination
+    
+
+class ProductController:
+    @staticmethod
+    def identify_top_selling_products():
+        result = db.session.query(
+            Product.name.label('product_name'),
+            func.sum(Order.quantity).label('total_quantity_ordered')
+        ).join(Order, Product.id == Order.product_id
+        ).group_by(Product.name
+        ).order_by(func.sum(Order.quantity).desc()).all()
+
+        return result
+
 

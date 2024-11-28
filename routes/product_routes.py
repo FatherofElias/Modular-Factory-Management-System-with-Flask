@@ -51,3 +51,10 @@ def delete_product(product_id):
     if not deleted_product:
         return jsonify({'message': 'Product not found'}), 404
     return product_schema.jsonify(deleted_product)
+
+
+@bp.route('/top-selling', methods=['GET'])
+@limiter.limit("5 per minute")
+def get_top_selling_products():
+    top_selling_products = ProductController.identify_top_selling_products()
+    return jsonify(top_selling_products)
