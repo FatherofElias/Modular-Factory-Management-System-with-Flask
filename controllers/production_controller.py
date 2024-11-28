@@ -14,7 +14,12 @@ class ProductionController:
 
     @staticmethod
     def add_production(data):
-        new_production = Production(product_id=data['product_id'], quantity_produced=data['quantity_produced'], date_produced=data['date_produced'])
+        new_production = Production(
+            product_id=data['product_id'],
+            employee_id=data['employee_id'],  # Add this line
+            quantity_produced=data['quantity_produced'],
+            date_produced=data['date_produced']
+        )
         db.session.add(new_production)
         db.session.commit()
         return new_production
@@ -24,6 +29,7 @@ class ProductionController:
         production = Production.query.get(production_id)
         if production:
             production.product_id = data['product_id']
+            production.employee_id = data['employee_id']  # Add this line
             production.quantity_produced = data['quantity_produced']
             production.date_produced = data['date_produced']
             db.session.commit()
@@ -37,7 +43,6 @@ class ProductionController:
             db.session.commit()
         return production
 
-
     @staticmethod
     def evaluate_production_efficiency(specific_date):
         subquery = db.session.query(Production).filter(Production.date_produced == specific_date).subquery()
@@ -46,5 +51,11 @@ class ProductionController:
             func.sum(subquery.c.quantity_produced).label('total_quantity_produced')
         ).join(subquery, Product.id == subquery.c.product_id
         ).group_by(Product.name).all()
+        
+    
+        efficiency_data = [
+            {"product_name": row.product_name, "total_quantity_produced": row.total_quantity_produced}
+            for row in result
+        ]
 
-        return result
+        return efficiency_data

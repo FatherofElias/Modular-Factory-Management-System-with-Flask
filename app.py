@@ -4,7 +4,7 @@ def run():
     app = create_app('DevelopmentConfig')
 
     with app.app_context():
-        db.drop_all()
+        #db.drop_all()
         db.create_all()
 
     return app

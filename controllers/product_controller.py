@@ -45,7 +45,7 @@ class ProductController:
         pagination = Product.query.paginate(page=page, per_page=per_page, error_out=False)
         return pagination
     
-    
+
     @staticmethod
     def identify_top_selling_products():
         result = db.session.query(
@@ -54,7 +54,13 @@ class ProductController:
         ).join(Order, Product.id == Order.product_id
         ).group_by(Product.name
         ).order_by(func.sum(Order.quantity).desc()).all()
+        
 
-        return result
+        top_selling_products = [
+            {"product_name": row.product_name, "total_quantity_ordered": row.total_quantity_ordered}
+            for row in result
+        ]
+
+        return top_selling_products
 
 

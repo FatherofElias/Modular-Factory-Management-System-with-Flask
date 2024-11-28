@@ -38,7 +38,6 @@ class CustomerController:
             db.session.commit()
         return customer
 
-
     @staticmethod
     def determine_customer_lifetime_value(threshold):
         result = db.session.query(
@@ -47,5 +46,12 @@ class CustomerController:
         ).join(Order, Customer.id == Order.customer_id
         ).group_by(Customer.name
         ).having(func.sum(Order.total_price) >= threshold).all()
+        
+    
+        lifetime_value_data = [
+            {"customer_name": row.customer_name, "total_order_value": row.total_order_value}
+            for row in result
+        ]
 
-        return result
+        return lifetime_value_data
+

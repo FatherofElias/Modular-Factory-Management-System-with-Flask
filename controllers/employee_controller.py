@@ -44,5 +44,11 @@ class EmployeeController:
             func.sum(Production.quantity_produced).label('total_quantity_produced')
         ).join(Production, Employee.id == Production.employee_id
         ).group_by(Employee.name).all()
+        
+       
+        performance_data = [
+            {"employee_name": row.employee_name, "total_quantity_produced": row.total_quantity_produced}
+            for row in result
+        ]
 
-        return result
+        return performance_data
