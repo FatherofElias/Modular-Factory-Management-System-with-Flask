@@ -1,4 +1,6 @@
+from sqlalchemy import func
 from models.employee import Employee
+from models.production import Production
 from database import db
 
 class EmployeeController:
@@ -33,3 +35,14 @@ class EmployeeController:
             db.session.delete(employee)
             db.session.commit()
         return employee
+
+
+    @staticmethod
+    def analyze_employee_performance():
+        result = db.session.query(
+            Employee.name.label('employee_name'),
+            func.sum(Production.quantity_produced).label('total_quantity_produced')
+        ).join(Production, Employee.id == Production.employee_id
+        ).group_by(Employee.name).all()
+
+        return result

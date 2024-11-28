@@ -45,3 +45,11 @@ def delete_employee(employee_id):
     if not deleted_employee:
         return jsonify({'message': 'Employee not found'}), 404
     return employee_schema.jsonify(deleted_employee)
+
+
+@bp.route('/performance', methods=['GET'])
+@limiter.limit("5 per minute")
+def get_employee_performance():
+    performance_data = EmployeeController.analyze_employee_performance()
+    return jsonify(performance_data)
+
