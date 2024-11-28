@@ -11,8 +11,10 @@ orders_schema = OrderSchema(many=True)
 @bp.route('/', methods=['GET'])
 @limiter.limit("5 per minute")
 def get_orders():
-    orders = OrderController.get_all_orders()
-    return orders_schema.jsonify(orders)
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    orders = OrderController.get_paginated_orders(page, per_page)
+    return orders_schema.jsonify(orders.items)
 
 @bp.route('/<int:order_id>', methods=['GET'])
 @limiter.limit("5 per minute")

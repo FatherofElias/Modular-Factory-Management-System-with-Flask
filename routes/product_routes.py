@@ -3,6 +3,7 @@ from controllers.product_controller import ProductController
 from models.schemas.product_schema import ProductSchema
 from __init__ import limiter
 
+
 bp = Blueprint('products', __name__, url_prefix='/products')
 
 product_schema = ProductSchema()
@@ -11,8 +12,10 @@ products_schema = ProductSchema(many=True)
 @bp.route('/', methods=['GET'])
 @limiter.limit("5 per minute")
 def get_products():
-    products = ProductController.get_all_products()
-    return products_schema.jsonify(products)
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    products = ProductController.get_paginated_products(page, per_page)
+    return products_schema.jsonify(products.items)
 
 @bp.route('/<int:product_id>', methods=['GET'])
 @limiter.limit("5 per minute")
