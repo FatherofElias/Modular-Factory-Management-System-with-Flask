@@ -15,7 +15,10 @@ def get_products():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     products = ProductController.get_paginated_products(page, per_page)
-    return products_schema.jsonify(products.items)
+    if products.items:
+        return products_schema.jsonify(products.items)
+    else:
+        return jsonify([])
 
 @bp.route('/<int:product_id>', methods=['GET'])
 @limiter.limit("5 per minute")

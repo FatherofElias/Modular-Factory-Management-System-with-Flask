@@ -3,6 +3,7 @@ from controllers.order_controller import OrderController
 from models.schemas.order_schema import OrderSchema
 from __init__ import limiter
 
+
 bp = Blueprint('orders', __name__, url_prefix='/orders')
 
 order_schema = OrderSchema()
@@ -14,7 +15,10 @@ def get_orders():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     orders = OrderController.get_paginated_orders(page, per_page)
-    return orders_schema.jsonify(orders.items)
+    if orders.items:
+        return orders_schema.jsonify(orders.items)
+    else:
+        return jsonify([])
 
 @bp.route('/<int:order_id>', methods=['GET'])
 @limiter.limit("5 per minute")

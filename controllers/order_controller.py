@@ -2,6 +2,7 @@ from models.order import Order
 from database import db
 
 
+
 class OrderController:
     @staticmethod
     def get_all_orders():
@@ -39,4 +40,5 @@ class OrderController:
 
     @staticmethod
     def get_paginated_orders(page, per_page):
-        return Order.query.paginate(page=page, per_page=per_page)
+        pagination = Order.query.paginate(page=page, per_page=per_page, error_out=False)
+        return pagination

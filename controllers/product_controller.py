@@ -2,6 +2,7 @@ from models.product import Product
 from database import db
 
 
+
 class ProductController:
     @staticmethod
     def get_all_products():
@@ -39,4 +40,6 @@ class ProductController:
 
     @staticmethod
     def get_paginated_products(page, per_page):
-        return Product.query.paginate(page=page, per_page=per_page)
+        pagination = Product.query.paginate(page=page, per_page=per_page, error_out=False)
+        return pagination
+
