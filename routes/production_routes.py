@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from controllers.production_controller import ProductionController
 from models.schemas.production_schema import ProductionSchema
+from jwt import jwt_required
+from decorators.role_required import role_required
 from __init__ import limiter
 
 bp = Blueprint('productions', __name__, url_prefix='/productions')
@@ -54,3 +56,17 @@ def get_production_efficiency():
         return jsonify({'message': 'Date parameter is required'}), 400
     efficiency_data = ProductionController.evaluate_production_efficiency(specific_date)
     return jsonify(efficiency_data)
+
+
+
+@bp.route('/efficiency', methods=['GET'])
+@jwt_required()
+@role_required('admin')
+def get_production_efficiency():
+    specific_date = request.args.get('date')
+    if not specific_date:
+        return jsonify({'message': 'Date parameter is required'}), 400
+    efficiency_data = ProductionController.evaluate_production_efficiency(specific_date)
+    return jsonify(efficiency_data)
+
+

@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from controllers.employee_controller import EmployeeController
 from models.schemas.employee_schema import EmployeeSchema
+from jwt import jwt_required
+from decorators.role_required import role_required
 from __init__ import limiter
 
 bp = Blueprint('employees', __name__, url_prefix='/employees')
@@ -53,3 +55,9 @@ def get_employee_performance():
     performance_data = EmployeeController.analyze_employee_performance()
     return jsonify(performance_data)
 
+@bp.route('/performance', methods=['GET'])
+@jwt_required()
+@role_required('admin')
+def get_employee_performance():
+    performance_data = EmployeeController.analyze_employee_performance()
+    return jsonify(performance_data)
