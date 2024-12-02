@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from controllers.production_controller import ProductionController
 from models.schemas.production_schema import ProductionSchema
-from jwt import jwt_required
+from flask_jwt_extended import jwt_required
 from decorators.role_required import role_required
 from __init__ import limiter
 
@@ -48,25 +48,21 @@ def delete_production(production_id):
         return jsonify({'message': 'Production not found'}), 404
     return production_schema.jsonify(deleted_production)
 
-@bp.route('/efficiency', methods=['GET'])
-@limiter.limit("5 per minute")
-def get_production_efficiency():
-    specific_date = request.args.get('date')  
-    if not specific_date:
-        return jsonify({'message': 'Date parameter is required'}), 400
-    efficiency_data = ProductionController.evaluate_production_efficiency(specific_date)
-    return jsonify(efficiency_data)
 
 
 
-@bp.route('/efficiency', methods=['GET'])
+@bp.route('/efficiency/<string:date>', methods=['GET'])
 @jwt_required()
 @role_required('admin')
-def get_production_efficiency():
-    specific_date = request.args.get('date')
-    if not specific_date:
-        return jsonify({'message': 'Date parameter is required'}), 400
-    efficiency_data = ProductionController.evaluate_production_efficiency(specific_date)
+def get_production_efficiency(date):
+    efficiency_data = ProductionController.evaluate_production_efficiency(date)
     return jsonify(efficiency_data)
 
 
+@bp.route('/save', methods=['POST'])
+@jwt_required()
+@role_required('admin')
+def save_production():
+    data = request.get_json()
+    response = ProductionController.save_production(data)
+    return jsonify(response), 201

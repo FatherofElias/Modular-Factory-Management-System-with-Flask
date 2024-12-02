@@ -2,6 +2,7 @@ from sqlalchemy import func
 from models.employee import Employee
 from models.production import Production
 from database import db
+from decorators.role_required import role_required
 
 class EmployeeController:
     @staticmethod
@@ -36,8 +37,23 @@ class EmployeeController:
             db.session.commit()
         return employee
 
+    @staticmethod
+    @role_required('admin')
+    def save_employee(data):
+        
+        new_employee = Employee(
+            name=data['name'],
+            position=data['position'],
+            department=data['department']
+        )
+        db.session.add(new_employee)
+        db.session.commit()
+        return {"message": "Employee saved successfully"}
+
+
 
     @staticmethod
+    @role_required('admin')
     def analyze_employee_performance():
         result = db.session.query(
             Employee.name.label('employee_name'),

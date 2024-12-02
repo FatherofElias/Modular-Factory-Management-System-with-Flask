@@ -2,7 +2,7 @@ from models.product import Product
 from database import db
 from sqlalchemy import func
 from models.order import Order
-
+from decorators.role_required import role_required
 
 
 class ProductController:
@@ -46,7 +46,23 @@ class ProductController:
         return pagination
     
 
+
+
     @staticmethod
+    @role_required('admin')
+    def save_product(data):
+        new_product = Product(
+            name=data['name'],
+            category=data['category'],
+            price=data['price']
+        )
+        db.session.add(new_product)
+        db.session.commit()
+        return {"message": "Product saved successfully"}
+
+
+    @staticmethod
+    @role_required('admin')
     def identify_top_selling_products():
         result = db.session.query(
             Product.name.label('product_name'),

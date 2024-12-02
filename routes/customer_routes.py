@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from controllers.customer_controller import CustomerController
 from models.schemas.customer_schema import CustomerSchema
-from jwt import jwt_required
+from flask_jwt_extended import jwt_required
 from decorators.role_required import role_required
 from __init__ import limiter
 
@@ -49,15 +49,6 @@ def delete_customer(customer_id):
     return customer_schema.jsonify(deleted_customer)
 
 
-
-@bp.route('/lifetime-value', methods=['GET'])
-@limiter.limit("5 per minute")
-def get_customer_lifetime_value():
-    threshold = request.args.get('threshold', 500, type=float)  
-    lifetime_value_data = CustomerController.determine_customer_lifetime_value(threshold)
-    return jsonify(lifetime_value_data)
-
-
 @bp.route('/lifetime-value', methods=['GET'])
 @jwt_required()
 @role_required('admin')
@@ -65,3 +56,11 @@ def get_customer_lifetime_value():
     threshold = request.args.get('threshold', 500, type=float)
     lifetime_value_data = CustomerController.determine_customer_lifetime_value(threshold)
     return jsonify(lifetime_value_data)
+
+@bp.route('/save', methods=['POST'])
+@jwt_required()
+@role_required('admin')
+def save_customer():
+    data = request.get_json()
+    response = CustomerController.save_customer(data)
+    return jsonify(response), 201

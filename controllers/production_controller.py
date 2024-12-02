@@ -2,6 +2,7 @@ from models.production import Production
 from database import db
 from sqlalchemy import func
 from models.product import Product
+from decorators.role_required import role_required
 
 class ProductionController:
     @staticmethod
@@ -16,7 +17,7 @@ class ProductionController:
     def add_production(data):
         new_production = Production(
             product_id=data['product_id'],
-            employee_id=data['employee_id'],  # Add this line
+            employee_id=data['employee_id'],  
             quantity_produced=data['quantity_produced'],
             date_produced=data['date_produced']
         )
@@ -29,7 +30,7 @@ class ProductionController:
         production = Production.query.get(production_id)
         if production:
             production.product_id = data['product_id']
-            production.employee_id = data['employee_id']  # Add this line
+            production.employee_id = data['employee_id'] 
             production.quantity_produced = data['quantity_produced']
             production.date_produced = data['date_produced']
             db.session.commit()
@@ -43,7 +44,27 @@ class ProductionController:
             db.session.commit()
         return production
 
+
+
     @staticmethod
+    def save_production(data):
+        if 'product_id' not in data or 'employee_id' not in data or 'quantity_produced' not in data or 'date_produced' not in data:
+            return {"message": "Missing required fields"}, 400
+
+        new_production = Production(
+            product_id=data['product_id'],
+            employee_id=data['employee_id'],
+            quantity_produced=data['quantity_produced'],
+            date_produced=data['date_produced']
+        )
+        db.session.add(new_production)
+        db.session.commit()
+        return {"message": "Production saved successfully"}
+
+
+
+    @staticmethod
+    @role_required('admin')
     def evaluate_production_efficiency(specific_date):
         subquery = db.session.query(Production).filter(Production.date_produced == specific_date).subquery()
         result = db.session.query(

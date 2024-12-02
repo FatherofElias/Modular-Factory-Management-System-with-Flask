@@ -1,5 +1,6 @@
 from models.order import Order
 from database import db
+from decorators.role_required import role_required
 
 
 
@@ -42,3 +43,18 @@ class OrderController:
     def get_paginated_orders(page, per_page):
         pagination = Order.query.paginate(page=page, per_page=per_page, error_out=False)
         return pagination
+
+
+    @staticmethod
+    @role_required('admin')
+    def save_order(data):
+        new_order = Order(
+            customer_id=data['customer_id'],
+            product_id=data['product_id'],
+            quantity=data['quantity'],
+            total_price=data['total_price']
+        )
+        db.session.add(new_order)
+        db.session.commit()
+        return {"message": "Order saved successfully"}
+

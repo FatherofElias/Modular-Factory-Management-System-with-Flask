@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from controllers.product_controller import ProductController
 from models.schemas.product_schema import ProductSchema
-from jwt import jwt_required
+from flask_jwt_extended import jwt_required
 from decorators.role_required import role_required
 from __init__ import limiter
 
@@ -55,12 +55,6 @@ def delete_product(product_id):
     return product_schema.jsonify(deleted_product)
 
 
-@bp.route('/top-selling', methods=['GET'])
-@limiter.limit("5 per minute")
-def get_top_selling_products():
-    top_selling_products = ProductController.identify_top_selling_products()
-    return jsonify(top_selling_products)
-
 
 @bp.route('/top-selling', methods=['GET'])
 @jwt_required()
@@ -68,3 +62,11 @@ def get_top_selling_products():
 def get_top_selling_products():
     top_selling_products = ProductController.identify_top_selling_products()
     return jsonify(top_selling_products)
+
+@bp.route('/save', methods=['POST'])
+@jwt_required()
+@role_required('admin')
+def save_product():
+    data = request.get_json()
+    response = ProductController.save_product(data)
+    return jsonify(response), 201

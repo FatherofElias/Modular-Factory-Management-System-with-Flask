@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify
 from controllers.order_controller import OrderController
 from models.schemas.order_schema import OrderSchema
 from __init__ import limiter
+from decorators.role_required import role_required
+from flask_jwt_extended import jwt_required
 
 
 bp = Blueprint('orders', __name__, url_prefix='/orders')
@@ -51,3 +53,13 @@ def delete_order(order_id):
     if not deleted_order:
         return jsonify({'message': 'Order not found'}), 404
     return order_schema.jsonify(deleted_order)
+
+
+
+@bp.route('/save', methods=['POST'])
+@jwt_required()
+@role_required('admin')
+def save_order():
+    data = request.get_json()
+    response = OrderController.save_order(data)
+    return jsonify(response), 201
