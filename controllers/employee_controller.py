@@ -44,7 +44,6 @@ class EmployeeController:
         new_employee = Employee(
             name=data['name'],
             position=data['position'],
-            department=data['department']
         )
         db.session.add(new_employee)
         db.session.commit()

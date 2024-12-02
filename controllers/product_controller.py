@@ -53,7 +53,6 @@ class ProductController:
     def save_product(data):
         new_product = Product(
             name=data['name'],
-            category=data['category'],
             price=data['price']
         )
         db.session.add(new_product)
