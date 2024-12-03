@@ -34,7 +34,6 @@ class TestEmployeeEndpoints(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json['message'], 'Employee not found')
 
-    # More tests for update and delete can be added similarly
 
 if __name__ == '__main__':
     unittest.main()

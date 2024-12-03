@@ -1,5 +1,4 @@
 import unittest
-from flask_jwt_extended import get_jwt_identity
 
 
 if __name__ == '__main__':
