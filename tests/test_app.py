@@ -1,6 +1,8 @@
 import unittest
 import sys
 import os
+from flask_jwt_extended import get_jwt_identity
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
