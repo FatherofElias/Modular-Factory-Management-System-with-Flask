@@ -1,0 +1,287 @@
+openapi: 3.0.0
+info:
+  title: Factory Management System API
+  description: API documentation for the Factory Management System
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+
+paths:
+  /employees/:
+    get:
+      summary: Get all employees
+      responses:
+        '200':
+          description: Successfully retrieved employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/models/schemas/Employee'
+        '429':
+          description: Too many requests
+    post:
+      summary: Add a new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/models/schemas/Employee'
+      responses:
+        '201':
+          description: Employee created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/models/schemas/Employee'
+        '429':
+          description: Too many requests
+
+  /products/:
+    get:
+      summary: Get all products
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successfully retrieved products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/models/schemas/Product'
+        '429':
+          description: Too many requests
+    post:
+      summary: Add a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/models/schemas/Product'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/models/schemas/Product'
+        '429':
+          description: Too many requests
+
+  /orders/:
+    get:
+      summary: Get all orders
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: per_page
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successfully retrieved orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/models/schemas/Order'
+        '429':
+          description: Too many requests
+    post:
+      summary: Add a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/models/schemas/Order'
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/models/schemas/Order'
+        '429':
+          description: Too many requests
+
+  /customers/:
+    get:
+      summary: Get all customers
+      responses:
+        '200':
+          description: Successfully retrieved customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/models/schemas/Customer'
+        '429':
+          description: Too many requests
+    post:
+      summary: Add a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/models/schemas/Customer'
+      responses:
+        '201':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/models/schemas/Customer'
+        '429':
+          description: Too many requests
+
+  /productions/:
+    get:
+      summary: Get all productions
+      responses:
+        '200':
+          description: Successfully retrieved productions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/models/schemas/Production'
+        '429':
+          description: Too many requests
+    post:
+      summary: Add a new production
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/models/schemas/Production'
+      responses:
+        '201':
+          description: Production created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/models/schemas/Production'
+        '429':
+          description: Too many requests
+
+components:
+  schemas:
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+        position:
+          type: string
+          maxLength: 100
+      required:
+        - name
+        - position
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+        price:
+          type: number
+          format: float
+      required:
+        - name
+        - price
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        customer_id:
+          type: integer
+        product_id:
+          type: integer
+        quantity:
+          type: integer
+        total_price:
+          type: number
+          format: float
+      required:
+        - customer_id
+        - product_id
+        - quantity
+        - total_price
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          maxLength: 100
+        phone:
+          type: string
+          maxLength: 20
+      required:
+        - name
+        - email
+        - phone
+
+    Production:
+      type: object
+      properties:
+        id:
+          type: integer
+        product_id:
+          type: integer
+        employee_id:
+          type: integer
+        quantity_produced:
+          type: integer
+        date_produced:
+          type: string
+          format: date
+      required:
+        - product_id
+        - employee_id
+        - quantity_produced
+        - date_produced
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
