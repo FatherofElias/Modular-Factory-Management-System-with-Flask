@@ -1,10 +1,15 @@
-openapi: 3.0.0
+swagger: "2.0"
 info:
-  title: Factory Management System API
-  description: API documentation for the Factory Management System
-  version: 1.0.0
-servers:
-  - url: http://localhost:5000
+  title: "Factory Management System API"
+  description: "API documentation for the Factory Management System"
+  version: "1.0.0"
+host: "127.0.0.1:5000"
+schemas:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
 
 paths:
   /employees/:
@@ -18,7 +23,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/models/schemas/Employee'
+                  $ref: '#/components/schemas/Employee'
         '429':
           description: Too many requests
     post:
@@ -28,14 +33,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/models/schemas/Employee'
+              $ref: '#/components/schemas/Employee'
       responses:
         '201':
           description: Employee created successfully
           content:
             application/json:
               schema:
-                $ref: '#/models/schemas/Employee'
+                $ref: '#/components/schemas/Employee'
         '429':
           description: Too many requests
 
@@ -61,7 +66,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/models/schemas/Product'
+                  $ref: '#/components/schemas/Product'
         '429':
           description: Too many requests
     post:
@@ -71,14 +76,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/models/schemas/Product'
+              $ref: '#/components/schemas/Product'
       responses:
         '201':
           description: Product created successfully
           content:
             application/json:
               schema:
-                $ref: '#/models/schemas/Product'
+                $ref: '#/components/schemas/Product'
         '429':
           description: Too many requests
 
@@ -104,7 +109,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/models/schemas/Order'
+                  $ref: '#/components/schemas/Order'
         '429':
           description: Too many requests
     post:
@@ -114,14 +119,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/models/schemas/Order'
+              $ref: '#/components/schemas/Order'
       responses:
         '201':
           description: Order created successfully
           content:
             application/json:
               schema:
-                $ref: '#/models/schemas/Order'
+                $ref: '#/components/schemas/Order'
         '429':
           description: Too many requests
 
@@ -131,31 +136,211 @@ paths:
       responses:
         '200':
           description: Successfully retrieved customers
-          content:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Customer'
+          examples:
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/models/schemas/Customer'
+              - id: 1
+                name: "John Doe"
+                email: "johndoe@example.com"
+                phone: "123-456-7890"
         '429':
           description: Too many requests
+          examples:
+            application/json:
+              message: "Too many requests"
+              status: 429
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Internal server error"
+              status: 500
     post:
       summary: Add a new customer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/models/schemas/Customer'
+      parameters:
+        - in: body
+          name: customer
+          schema:
+            $ref: '#/components/schemas/Customer'
+          examples:
+            application/json:
+              name: "Jane Doe"
+              email: "janedoe@example.com"
+              phone: "098-765-4321"
       responses:
         '201':
           description: Customer created successfully
-          content:
+          schema:
+            $ref: '#/components/schemas/Customer'
+          examples:
             application/json:
-              schema:
-                $ref: '#/models/schemas/Customer'
+              id: 2
+              name: "Jane Doe"
+              email: "janedoe@example.com"
+              phone: "098-765-4321"
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Invalid input"
+              status: 400
         '429':
           description: Too many requests
+          examples:
+            application/json:
+              message: "Too many requests"
+              status: 429
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Internal server error"
+              status: 500
+
+  /customers/{customer_id}:
+    get:
+      summary: Get a customer by ID
+      parameters:
+        - in: path
+          name: customer_id
+          type: integer
+          required: true
+      responses:
+        '200':
+          description: Successfully retrieved customer
+          schema:
+            $ref: '#/components/schemas/Customer'
+          examples:
+            application/json:
+              id: 1
+              name: "John Doe"
+              email: "johndoe@example.com"
+              phone: "123-456-7890"
+        '404':
+          description: Customer not found
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Customer not found"
+              status: 404
+        '429':
+          description: Too many requests
+          examples:
+            application/json:
+              message: "Too many requests"
+              status: 429
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Internal server error"
+              status: 500
+    put:
+      summary: Update a customer by ID
+      parameters:
+        - in: path
+          name: customer_id
+          type: integer
+          required: true
+        - in: body
+          name: customer
+          schema:
+            $ref: '#/components/schemas/Customer'
+          examples:
+            application/json:
+              name: "John Smith"
+              email: "johnsmith@example.com"
+              phone: "321-654-0987"
+      responses:
+        '200':
+          description: Customer updated successfully
+          schema:
+            $ref: '#/components/schemas/Customer'
+          examples:
+            application/json:
+              id: 1
+              name: "John Smith"
+              email: "johnsmith@example.com"
+              phone: "321-654-0987"
+        '400':
+          description: Invalid input
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Invalid input"
+              status: 400
+        '404':
+          description: Customer not found
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Customer not found"
+              status: 404
+        '429':
+          description: Too many requests
+          examples:
+            application/json:
+              message: "Too many requests"
+              status: 429
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Internal server error"
+              status: 500
+    delete:
+      summary: Delete a customer by ID
+      parameters:
+        - in: path
+          name: customer_id
+          type: integer
+          required: true
+      responses:
+        '200':
+          description: Customer deleted successfully
+          schema:
+            $ref: '#/components/schemas/Customer'
+          examples:
+            application/json:
+              message: "customer deleted successfully"
+        '404':
+          description: Customer not found
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Customer not found"
+              status: 404
+        '429':
+          description: Too many requests
+          examples:
+            application/json:
+              message: "Too many requests"
+              status: 429
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            application/json:
+              message: "Internal server error"
+              status: 500
 
   /productions/:
     get:
@@ -168,7 +353,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/models/schemas/Production'
+                  $ref: '#/components/schemas/Production'
         '429':
           description: Too many requests
     post:
@@ -178,14 +363,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/models/schemas/Production'
+              $ref: '#/components/schemas/Production'
       responses:
         '201':
           description: Production created successfully
           content:
             application/json:
               schema:
-                $ref: '#/models/schemas/Production'
+                $ref: '#/components/schemas/Production'
         '429':
           description: Too many requests
 
@@ -259,6 +444,17 @@ components:
         - name
         - email
         - phone
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        status:
+          type: integer
+      required:
+        - message
+        - status
 
     Production:
       type: object

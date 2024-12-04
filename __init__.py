@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
 from database import db
 from flask_limiter import Limiter
@@ -7,7 +7,10 @@ from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager
 from controllers.jwt_controller import setup_jwt_routes
 from routes.debug import bp as debug_bp
+from flask_swagger_ui import get_swaggerui_blueprint
 
+
+    
 
 limiter = Limiter(key_func=get_remote_address)
 ma = Marshmallow()
