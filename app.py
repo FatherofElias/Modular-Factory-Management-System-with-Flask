@@ -2,13 +2,15 @@ from __init__ import create_app, db
 from flask_swagger_ui import get_swaggerui_blueprint
 import os
 
+
+
 def run():
     app = create_app('DevelopmentConfig')
 
     with app.app_context():
         db.create_all()
 
-   
+
     SWAGGER_URL = '/api/docs' 
     API_URL = '/static/swagger.yaml' 
 
@@ -27,6 +29,7 @@ def run():
         yaml_path = os.path.join(os.path.dirname(__file__), 'static/swagger.yaml')
         with open(yaml_path, 'r') as file:
             return file.read(), 200, {'Content-Type': 'application/x-yaml'}
+
 
     return app
 

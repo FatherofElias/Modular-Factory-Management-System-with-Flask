@@ -3,6 +3,7 @@ from database import db
 from sqlalchemy import func
 from models.order import Order
 from decorators.role_required import role_required
+from werkzeug.exceptions import BadRequest
 
 
 class CustomerController:
@@ -14,8 +15,17 @@ class CustomerController:
     def get_customer_by_id(customer_id):
         return Customer.query.get(customer_id)
 
+
+class CustomerController:
     @staticmethod
     def add_customer(data):
+        # Check for missing fields
+        required_fields = ['name', 'email', 'phone']
+        missing_fields = [field for field in required_fields if field not in data]
+        
+        if missing_fields:
+            raise BadRequest(f"Invalid input: Missing fields {', '.join(missing_fields)}")
+        
         new_customer = Customer(name=data['name'], email=data['email'], phone=data['phone'])
         db.session.add(new_customer)
         db.session.commit()
@@ -23,6 +33,13 @@ class CustomerController:
 
     @staticmethod
     def update_customer(customer_id, data):
+        # Check for missing fields
+        required_fields = ['name', 'email', 'phone']
+        missing_fields = [field for field in required_fields if field not in data]
+        
+        if missing_fields:
+            raise BadRequest(f"Invalid input: Missing fields {', '.join(missing_fields)}")
+
         customer = Customer.query.get(customer_id)
         if customer:
             customer.name = data['name']
@@ -30,6 +47,7 @@ class CustomerController:
             customer.phone = data['phone']
             db.session.commit()
         return customer
+
 
     @staticmethod
     def delete_customer(customer_id):
