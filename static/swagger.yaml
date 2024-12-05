@@ -457,18 +457,21 @@ paths:
               status: 500
 
 
+
   /orders/:
     get:
       summary: Get all orders
       parameters:
         - in: query
           name: page
-          type: integer
-          default: 1
+          schema:
+            type: integer
+            default: 1
         - in: query
           name: per_page
-          type: integer
-          default: 10
+          schema:
+            type: integer
+            default: 10
       responses:
         '200':
           description: Successfully retrieved orders
@@ -502,6 +505,7 @@ paths:
             application/json:
               message: "Internal server error"
               status: 500
+
 
     post:
       summary: Add a new order
